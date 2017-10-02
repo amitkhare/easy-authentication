@@ -1,0 +1,24 @@
+{
+    "name": "amitkhare/easy-authentication",
+    "description": "Easy Authentication is an easy and simple PHP authentication library",
+    "homepage": "http://github.com/amitkhare/easy-authentication",
+    "license": "MIT",
+    "autoload":{
+        "psr-4":{
+            "AmitKhare\\":"src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Amit Kumar Khare",
+            "email": "me.amitkhare@gmail.com"
+        }
+    ],
+
+    "minimum-stability": "stable",
+    
+    "require": {
+        "php": ">=5.5.0",
+        "amitkhare/easy-validation": "^0.5.8"
+    }
+}
