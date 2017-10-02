@@ -19,6 +19,11 @@
     
     "require": {
         "php": ">=5.5.0",
-        "amitkhare/easy-validation": "^0.5.8"
+        "amitkhare/easy-validation": "^0.5.8",
+        "amitkhare/easy-translator": "^0.1.2",
+        "illuminate/database": "^5.5",
+        "kint-php/kint": "^2.2",
+        "amitkhare/easy-session": "^0.0",
+        "psr/http-message": "^1.0"
     }
 }
