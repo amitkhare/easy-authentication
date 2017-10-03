@@ -43,12 +43,12 @@ $auth = new EasyAuthentication( new User(), $rules );
 
 
 $auth->login($_GET);
-//$auth->logout(true);
-
 
 s($auth->response->getErrors());
 s($auth->response->getMessages());
 
-//s($auth->getStorage());
-//s($auth->isLoggedin());
-//s($auth->getCurrentUser());
+s($auth->getStorage());
+s($auth->isLoggedin());
+s($auth->getCurrentUser());
+
+$auth->logout(true);
