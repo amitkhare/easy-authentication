@@ -33,11 +33,22 @@ $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
 
-$auth = new EasyAuthentication( new User() );
+$rules = [
+    "identifier"  => "required|min:2|max:25",
+    "password"  => "required|min:6|max:35"
+];
+
+$auth = new EasyAuthentication( new User(), $rules );
 
 
 
 $auth->login($_GET);
 //$auth->logout(true);
+
+
 s($auth->response->getErrors());
 s($auth->response->getMessages());
+
+//s($auth->getStorage());
+//s($auth->isLoggedin());
+//s($auth->getCurrentUser());

@@ -33,6 +33,7 @@ use AmitKhare\EasyValidation;
 use AmitKhare\EasyAuth\Helpers;
 use AmitKhare\EasyAuth\Response;
 use AmitKhare\EasyAuth\Storage;
+use AmitKhare\EasyAuth\ValidationRules;
 use AmitKhare\EasyAuth\UserInterface;
 
 class EasyAuthentication  {
@@ -41,31 +42,35 @@ class EasyAuthentication  {
     protected $validation;
     protected $translator;
     protected $user;
+    protected $vRules;
     public $response;
     
     
-    public function __construct(UserInterface $user,$locale="en-IN",$localePath=__DIR__."/locales/", $storageName="AUTH"){
-
-        $this->storage = new Storage($storageName);
+    public function __construct(UserInterface $user,array $validationRules=null,$locale="en-IN",$localePath=__DIR__."/locales/", $storageName="AUTH"){
+        $this->user = $user;
 
         $this->validation = new EasyValidation();
         $this->validation->setLocale($locale,$localePath); 
-        
+
         $this->response = new Response($locale,$localePath);
-        $this->user = $user;
+        
+        $this->vRules = new ValidationRules($validationRules);
+        
+        $this->storage = new Storage($storageName);
+        
     }
     
     public function register(array $data){
         
     }
-    
+
     public function login(array $data){
 
         $v = $this->validation;
         $v->setSource($data);
-    
-        $v->check("identifier","required|min:2|max:25");
-        $v->check("password","required|min:6|max:30");
+
+        $v->check("identifier", $this->vRules->r("identifier") );
+        $v->check("password", $this->vRules->r("password") );
     
         if(!$v->isValid()){
             $this->response->setErrors($v->getStatus(),"danger");
@@ -91,10 +96,38 @@ class EasyAuthentication  {
         return true;
     }
     
-    public function isLoggedin(){
-        $data = $this->getStorage();
+    
+    public function isSuperAdmin() {
+        return $this->check("superadmin");
+    }
+    public function isAdmin() {
+        return $this->check("admin");
+    }
+    public function isModerator() {
+        return $this->check("moderator");
+    }
+    public function isLoggedin() {
+        return $this->check("user");
+    }
+    public function check($userRole="user") {
+
+        if(!$data = $this->getStorage()){
+            // not loggedin
+            return false;
+        }
         
-        return $this->getToken($data->token);
+        if(!$this->getToken($data->token)){
+            // invalid token
+            return false;
+        }
+
+        if(!$this->hasRole($data->token,$userRole)){
+            // no role
+            return false;
+        }
+        
+        return true;
+
     }
     
     public function getCurrentUser(){
@@ -154,6 +187,7 @@ class EasyAuthentication  {
             $token->delete();
         }
         
+        $this->response->setMessage(200,"USER_LOGGED_OUT","success");
     	return $this->storage->clearData();
     }
     
