@@ -26,7 +26,6 @@ Run this command from the directory in which you want to install.
 ## Usage:
 ```sh
 
-
  
 ```
 ## Available Methods:
