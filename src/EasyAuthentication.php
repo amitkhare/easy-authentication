@@ -28,61 +28,155 @@ namespace AmitKhare;
 
 use Illuminate\Database\Eloquent\Model;
 
-use AmitKhare\EasyUserModelInterface;
-
-use AmitKhare\EasySession;
 use AmitKhare\EasyValidation;
-use AmitKhare\EasyTranslator;
-use AmitKhare\EasyHasher;
+
+use AmitKhare\EasyAuth\Helpers;
+use AmitKhare\EasyAuth\Response;
+use AmitKhare\EasyAuth\Storage;
+use AmitKhare\EasyAuth\UserInterface;
 
 class EasyAuthentication  {
     
-    protected $session;
-    protected $validator;
+    protected $storage;
+    protected $validation;
     protected $translator;
     protected $user;
+    public $response;
     
-    public function __construct(EasyUserModelInterface $user){
+    
+    public function __construct(UserInterface $user,$locale="en-IN",$localePath=__DIR__."/locales/", $storageName="AUTH"){
 
-        $this->session = new EasySession("AUTH");
-        $this->validator = new EasyValidation();
-        $this->translator = new EasyTranslator();
+        $this->storage = new Storage($storageName);
+
+        $this->validation = new EasyValidation();
+        $this->validation->setLocale($locale,$localePath); 
         
+        $this->response = new Response($locale,$localePath);
         $this->user = $user;
     }
     
-    public function login(string $identifier, string $password){
-        
-        $identifier = trim($identifier);
-        $password = trim($password);
-       
-        $user = $this->user->where('email','=',$identifier)->orWhere('username', '=', $identifier)->first();
-        
-        if(!$user){
-        	// user not found
-        	s("user not found");
-            return false;
-        }
-        
-        if(!EasyHasher::verify($password,$user->password)){
-        	// password missmatch
-        	s("password missmatch");
-        	return false;
-        }
-        // varified
-        d($this->_createToken($user));
-    }
-
     public function register(array $data){
         
     }
     
-    public function logout(){
-        // clear session
-    	$this->session->clear();
+    public function login(array $data){
+
+        $v = $this->validation;
+        $v->setSource($data);
+    
+        $v->check("identifier","required|min:2|max:25");
+        $v->check("password","required|min:6|max:30");
+    
+        if(!$v->isValid()){
+            $this->response->setErrors($v->getStatus(),"danger");
+            return false;
+        }
+        
+        if(!$user = $this->_fetchUser($data)){
+            // no user found no need to send response
+            return false;
+        }
+        
+        // varified
+        if(!$token= $this->_createToken($user)) {
+        	// unable to create token
+        	$this->response->setMessage(500,"TOKEN_CREATION_FAILED","danger");
+            return false;	
+        }
+        
+    	$this->storage->setData(["token"=>$token->token]);
+        
+        $this->response->setMessage(200,"USER_LOGGED_IN","success");
+        
+        return true;
     }
     
-    private function _createToken($user){
+    public function isLoggedin(){
+        $data = $this->getStorage();
+        
+        return $this->getToken($data->token);
+    }
+    
+    public function getCurrentUser(){
+        $token = $this->getStorage()->token;
+        if(!$token = $this->getToken($token) ){
+           return false;
+        }
+        $user = $token->user;
+        return $user;
+    }
+    
+    public function getUser($token){
+        if(!$token = $this->getToken($token) ){
+           return false;
+        }
+        $user = $token->user;
+        return $user;
+    }
+    
+    public function getRoles($token){
+        if(!$token = $this->getToken($token) ){
+           return false;
+        }
+        $user = $token->user;
+        
+        return $user->roles;
+    }
+    
+    public function hasRole($token,$role){
+        
+        $roles = $this->getRoles($token);
+        
+        foreach ($roles as $r) {
+            if($r->role == $role){
+                return true;
+            }
+        }
+        
+        return false;
+        
+    }
+    
+    public function getToken($token){
+        if(!$token = $this->user->first()->tokens()->where(["token"=>$token])->first() ){
+           return false;
+        }
+        return $token;
+    }
+    
+    public function logout($everywhere=false){
+        // clear session
+        $tokenStr = $this->getStorage()->token;
+
+        if($everywhere){
+            $this->removeTokens($tokenStr);
+        } else if($token = $this->getToken($tokenStr)){
+            $token->delete();
+        }
+        
+    	return $this->storage->clearData();
+    }
+    
+    private function removeTokens($token){
+
+        if(!$user = $this->getUser($token)){
+            return false;
+        }
+    
+        foreach ($user->tokens as $t) {
+            $t->delete();
+        }
+        return true;
+    }
+    
+    public function getStorage(){
+        $storage = $this->storage->getData();
+        $storage['token'] = ($storage['token']) ? $storage['token'] : null;
+        return (object) $storage;
+    }
+    
+    private function _createToken($user) {
+        $user->allowed_tokens = ($user->allowed_tokens) ? $user->allowed_tokens : 3;
         
         // delete old and extra tokens, this will limit token creation
 		$tokens = $user->tokens()->where(['user_id'=>$user->id]);
@@ -95,33 +189,15 @@ class EasyAuthentication  {
 			}
 		}
    
-
-        // generate token data
-		if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-		    $ip = $_SERVER['HTTP_CLIENT_IP'];
-		} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		} else {
-		    $ip = $_SERVER['REMOTE_ADDR'];
-		}
-		
-		$user_agent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "Unknown";
-		
-		$referrer = (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER']  : "Accessed directly";
-
-		$session_data["IP address"]  = $ip;
-		$session_data["Browser (User Agent)"]   = $user_agent;
-		$session_data["Referrer:"] =  $referrer;
-        
+        $clientData = Helpers::getClientData();
         
         $token = $user->tokens()->create([
 			'user_id'=>$user->id,
-			'token'=>EasyHasher::randomKey(60,true),
-            'session_data'=>json_encode($session_data),
-            'ip'=>$ip,
-            'user_agent'=>$user_agent,
-            'referrer'=>$referrer,
-            'ip'=>$ip,
+			'token'=>Helpers::randomKey(60,true),
+            'session_data'=>$clientData['session_data'],
+            'user_agent'=>$clientData['user_agent'],
+            'referrer'=>$clientData['referrer'],
+            'ip'=>$clientData['ip'],
             'is_active'=>1
         ]);
         
@@ -129,17 +205,32 @@ class EasyAuthentication  {
         
     }
     
-    private function _setAuthData($token,$user){
-        $data['token'] = $token->token;
-		$data['user'] = [
-	        "id"=> $user->id,
-	        "is_active"=> $user->is_active,
-	        "email"=> $user->email,
-	        "username"=> $user->username,
-	        "fullname"=> $user->profile->fullname()
-	    ];
-    	$this->storage->setAuthData($data);
-    	return $data;
+    private function _fetchUser(array $data) {
+        
+        $identifier = trim($data['identifier']);
+        $password = trim($data['password']);
+       
+        $user = $this->user->where('email','=',$identifier)->orWhere('username', '=', $identifier)->first();
+        
+        if(!$user){
+        	// user not found
+        	$this->response->setMessage(403,"USER_NOT_FOUND","info");
+            return false;
+        }
+        
+        if(!Helpers::verify($password,$user->password)){
+        	// password missmatch
+        	$this->response->setMessage(403,"INVALID_PASSWORD","info");
+        	return false;
+        }
+        
+        // clear forgot password hash
+        if($user->password_recovery_hash){
+            $user->password_recovery_hash=null;
+            $user->save();
+        }
+        
+        return $user;
     }
     
    

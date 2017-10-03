@@ -10,7 +10,7 @@ use AmitKhare\EasyAuthentication;
 
 // autoload via composer
 require __DIR__.'/../vendor/autoload.php';
-require __DIR__.'/TestClasses.php';
+require __DIR__.'/Models.php';
 
 $capsule = new Capsule;
 
@@ -33,8 +33,11 @@ $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
 
-$auth = new EasyAuthentication( new User()  );
+$auth = new EasyAuthentication( new User() );
 
-//s($auth);
-$login = $auth->login("amit","sanchar");
 
+
+$auth->login($_GET);
+//$auth->logout(true);
+s($auth->response->getErrors());
+s($auth->response->getMessages());
