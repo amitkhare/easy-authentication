@@ -114,8 +114,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `mobile`, `allowed_tokens`, `email_verification_hash`, `password_recovery_hash`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'amit', 'amit@khare.co.in', '', NULL, 3, '', NULL, 1, '2017-09-26 19:00:42', '2017-09-26 19:00:42'),
-(2, 'admin', 'admin@github.net', '', NULL, 3, NULL, NULL, 1, '2017-09-26 19:01:08', '2017-09-26 19:02:53');
+(1, 'amit', 'amit@khare.co.in', '$2y$10$ciHYmVAoVf0faLm97pXET.AaiZycm4fcnhE4Us7wd/B0o7ZHbCyqK', NULL, 3, '', NULL, 1, '2017-09-26 19:00:42', '2017-09-26 19:00:42'),
+(2, 'admin', 'admin@github.net', '$2y$10$ciHYmVAoVf0faLm97pXET.AaiZycm4fcnhE4Us7wd/B0o7ZHbCyqK', NULL, 3, NULL, NULL, 1, '2017-09-26 19:01:08', '2017-09-26 19:02:53');
 
 -- --------------------------------------------------------
 

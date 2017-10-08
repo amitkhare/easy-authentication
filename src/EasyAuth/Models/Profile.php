@@ -1,17 +1,12 @@
 <?php
+
+namespace AmitKhare\EasyAuth\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
-class User extends AmitKhare\EasyAuth\Models\User  {
-    
-    public function profile() {
-        return $this->hasOne(Profile::class,'user_id');
-    }
-}
-
+use AmitKhare\EasyAuth\Models\User;
 
 class Profile extends Model  {
-    
-    protected   $table = 'profiles';
     
     protected $fillable = [
         'user_id',

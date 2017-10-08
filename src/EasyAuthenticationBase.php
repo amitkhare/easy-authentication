@@ -34,7 +34,7 @@ use AmitKhare\EasyAuth\Helpers;
 use AmitKhare\EasyAuth\Response;
 use AmitKhare\EasyAuth\Storage;
 use AmitKhare\EasyAuth\ValidationRules;
-use AmitKhare\EasyAuth\Models\User;
+use AmitKhare\EasyAuth\UserInterface;
 
 class EasyAuthenticationBase  {
     
@@ -42,13 +42,21 @@ class EasyAuthenticationBase  {
     protected $validation;
     protected $translator;
     protected $user;
+    protected $token;
+    protected $role;
     protected $vRules;
     public $response;
     
     
-    public function __construct(User $user,array $validationRules=null,$locale="en-IN",$localePath=__DIR__."/locales/", $storageName="AUTH"){
+    public function __construct(UserInterface $user = null, array $validationRules=null,$locale="en-IN",$localePath=__DIR__."/locales/", $storageName="AUTH"){
+        if($user == null){
+           $user = new \AmitKhare\EasyAuth\Models\User();
+        }
+    
         $this->user = $user;
-
+        $this->token = $this->user->tokens()->make()->newInstance();
+        $this->role = $this->user->roles()->make()->newInstance();
+        
         $this->validation = new EasyValidation();
         $this->validation->setLocale($locale,$localePath); 
 
@@ -57,6 +65,8 @@ class EasyAuthenticationBase  {
         $this->vRules = new ValidationRules($validationRules);
         
         $this->storage = new Storage($storageName);
+        
+       
         
     }
     
@@ -134,7 +144,8 @@ class EasyAuthenticationBase  {
     }
     
     public function getToken($token){
-        if(!$token = $this->user->first()->tokens()->where(["token"=>$token])->first() ){
+        
+        if(!$token = $this->token->where(["token"=>$token,"is_active"=>1])->first() ){
            return false;
         }
         return $token;
@@ -146,11 +157,13 @@ class EasyAuthenticationBase  {
 
         if($everywhere){
             $this->removeTokens($tokenStr);
+            $this->response->setMessage(200,"USER_LOGGED_OUT_EVERYWHERE","success");
         } else if($token = $this->getToken($tokenStr)){
             $token->delete();
+            $this->response->setMessage(200,"USER_LOGGED_OUT","success");
         }
         
-        $this->response->setMessage(200,"USER_LOGGED_OUT","success");
+        
     	return $this->storage->clearData();
     }
     
@@ -176,7 +189,7 @@ class EasyAuthenticationBase  {
         $user->allowed_tokens = ($user->allowed_tokens) ? $user->allowed_tokens : 3;
         
         // delete old and extra tokens, this will limit token creation
-		$tokens = $user->tokens()->where(['user_id'=>$user->id]);
+		$tokens = $this->token->where(['user_id'=>$user->id]);
 		$token_count = count($tokens->get());
 		if($token_count >= $user->allowed_tokens){
 			for ($i = $token_count; $i >= $user->allowed_tokens; $i--) {
@@ -190,7 +203,7 @@ class EasyAuthenticationBase  {
         
         $token = $user->tokens()->create([
 			'user_id'=>$user->id,
-			'token'=>Helpers::randomKey(60,true),
+			'token'=>Helpers::randomKey(60,false),
             'session_data'=>$clientData['session_data'],
             'user_agent'=>$clientData['user_agent'],
             'referrer'=>$clientData['referrer'],

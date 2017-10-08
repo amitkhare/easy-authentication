@@ -50,7 +50,7 @@ class ValidationRules {
             "email"         => "required|email",
             "username"      => "required|min:2|max:25",
             "gender"        => "required|alpha",
-            "password"      => "required|min:6|max:35"
+            "password"      => "required|min:3|max:35"
         ];
         
         return $rules;
