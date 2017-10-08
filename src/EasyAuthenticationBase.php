@@ -34,7 +34,7 @@ use AmitKhare\EasyAuth\Helpers;
 use AmitKhare\EasyAuth\Response;
 use AmitKhare\EasyAuth\Storage;
 use AmitKhare\EasyAuth\ValidationRules;
-use AmitKhare\EasyAuth\UserInterface;
+use AmitKhare\EasyAuth\Models\User;
 
 class EasyAuthenticationBase  {
     
@@ -46,7 +46,7 @@ class EasyAuthenticationBase  {
     public $response;
     
     
-    public function __construct(UserInterface $user,array $validationRules=null,$locale="en-IN",$localePath=__DIR__."/locales/", $storageName="AUTH"){
+    public function __construct(User $user,array $validationRules=null,$locale="en-IN",$localePath=__DIR__."/locales/", $storageName="AUTH"){
         $this->user = $user;
 
         $this->validation = new EasyValidation();

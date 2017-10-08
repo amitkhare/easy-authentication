@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 03, 2017 at 01:07 PM
+-- Generation Time: Oct 08, 2017 at 09:29 AM
 -- Server version: 5.7.13-0ubuntu0.16.04.2
 -- PHP Version: 7.0.22-2+ubuntu16.04.1+deb.sury.org+4
 
@@ -19,6 +19,32 @@ SET time_zone = "+00:00";
 --
 -- Database: `easy_auth`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `profiles`
+--
+
+CREATE TABLE `profiles` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `firstname` varchar(50) DEFAULT NULL,
+  `middlename` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL,
+  `gender` varchar(10) DEFAULT NULL,
+  `avatar` varchar(255) NOT NULL DEFAULT 'https://avatars.io/static/default_128.jpg',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `profiles`
+--
+
+INSERT INTO `profiles` (`id`, `user_id`, `firstname`, `middlename`, `lastname`, `gender`, `avatar`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Amit', NULL, NULL, 'male', 'https://avatars.io/static/default_128.jpg', '2017-09-26 19:00:42', '2017-09-26 19:00:42'),
+(2, 2, 'Admin', NULL, NULL, 'male', 'https://avatars.io/static/default_128.jpg', '2017-09-26 19:01:08', '2017-09-26 19:01:08');
 
 -- --------------------------------------------------------
 
@@ -88,8 +114,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `mobile`, `allowed_tokens`, `email_verification_hash`, `password_recovery_hash`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'amit', 'amit@khare.co.in', 'password', NULL, 3, '', NULL, 1, '2017-09-26 19:00:42', '2017-09-26 19:00:42'),
-(2, 'admin', 'admin@github.net', 'password', NULL, 3, NULL, NULL, 1, '2017-09-26 19:01:08', '2017-09-26 19:02:53');
+(1, 'amit', 'amit@khare.co.in', '', NULL, 3, '', NULL, 1, '2017-09-26 19:00:42', '2017-09-26 19:00:42'),
+(2, 'admin', 'admin@github.net', '', NULL, 3, NULL, NULL, 1, '2017-09-26 19:01:08', '2017-09-26 19:02:53');
 
 -- --------------------------------------------------------
 
@@ -116,6 +142,12 @@ INSERT INTO `users_roles` (`id`, `user_id`, `role_id`) VALUES
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `profiles`
+--
+ALTER TABLE `profiles`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `roles`
@@ -148,6 +180,11 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT for dumped tables
 --
 
+--
+-- AUTO_INCREMENT for table `profiles`
+--
+ALTER TABLE `profiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `roles`
 --

@@ -18,7 +18,7 @@ $capsule->addConnection([
     
     'driver'=>'mysql',
     'host'=>'localhost',
-    'database'=>'slim_modular',
+    'database'=>'easy_auth',
     'username'=>'amit',
     'password'=>'amit',
     'charset'=>'utf8',
@@ -35,20 +35,19 @@ $capsule->bootEloquent();
 
 $rules = [
     "identifier"  => "required|min:2|max:25",
-    "password"  => "required|min:6|max:35"
+    "password"  => "required|min:4|max:35"
 ];
 
 $auth = new EasyAuthentication( new User(), $rules );
 
 
-
 $auth->login($_GET);
-
-s($auth->response->getErrors());
-s($auth->response->getMessages());
 
 s($auth->getStorage());
 s($auth->isLoggedin());
 s($auth->getCurrentUser());
 
 $auth->logout(true);
+
+s($auth->response->getErrors());
+s($auth->response->getMessages());
