@@ -39,15 +39,15 @@ $rules = [
     "password"  => "required|min:4|max:35"
 ];
 
-$auth = new EasyAuthentication( new Admin\User(), $rules );
-//$auth = new EasyAuthentication();
+//$auth = new EasyAuthentication( new Admin\User(), $rules );
+$auth = new EasyAuthentication();
 
 // identifier = 'amit' password = 'pass'
 $auth->login($_GET);
 
-s($auth->getCurrentUser()->profile);
+s($auth->getCurrentUser());
 s($auth->getStorage()->token);
-s($auth->getToken("akk"));
+
 s($auth->isLoggedin());
 
 $auth->logout(true);

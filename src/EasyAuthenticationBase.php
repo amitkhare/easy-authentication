@@ -26,7 +26,7 @@ namespace AmitKhare;
  * @author Amit Kumar Khare <me.amitkhare@gmail.com>
  */
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
 use AmitKhare\EasyValidation;
 
@@ -48,7 +48,13 @@ class EasyAuthenticationBase  {
     public $response;
     
     
-    public function __construct(UserInterface $user = null, array $validationRules=null,$locale="en-IN",$localePath=__DIR__."/locales/", $storageName="AUTH"){
+    public function __construct(
+                        UserInterface $user = null,
+                        array $validationRules=null,
+                        $locale="en-IN",
+                        $localePath=__DIR__."/locales/",
+                        $storageName="AUTH" ) {
+            
         if($user == null){
            $user = new \AmitKhare\EasyAuth\Models\User();
         }
@@ -70,20 +76,7 @@ class EasyAuthenticationBase  {
         
     }
     
-    public function isSuperAdmin() {
-        return $this->check("superadmin");
-    }
-    public function isAdmin() {
-        return $this->check("admin");
-    }
-    public function isModerator() {
-        return $this->check("moderator");
-    }
     public function isLoggedin() {
-        return $this->check("user");
-    }
-    public function check($userRole="user") {
-
         if(!$data = $this->getStorage()){
             // not loggedin
             return false;
@@ -93,8 +86,18 @@ class EasyAuthenticationBase  {
             // invalid token
             return false;
         }
+        
+        return $data->token;
+    }
+    
+    public function check($userRole) {
 
-        if(!$this->hasRole($data->token,$userRole)){
+        if(!$token = $this->isLoggedin()){
+            // invalid token
+            return false;
+        }
+
+        if(!$this->hasRole($token,$userRole)){
             // no role
             return false;
         }
@@ -189,7 +192,9 @@ class EasyAuthenticationBase  {
         $user->allowed_tokens = ($user->allowed_tokens) ? $user->allowed_tokens : 3;
         
         // delete old and extra tokens, this will limit token creation
-		$tokens = $this->token->where(['user_id'=>$user->id]);
+		//$tokens = $this->token->where(['user_id'=>$user->id]);
+		$tokens = $user->tokens();
+		
 		$token_count = count($tokens->get());
 		if($token_count >= $user->allowed_tokens){
 			for ($i = $token_count; $i >= $user->allowed_tokens; $i--) {

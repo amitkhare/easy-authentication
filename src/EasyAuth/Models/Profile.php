@@ -2,11 +2,11 @@
 
 namespace AmitKhare\EasyAuth\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
 use AmitKhare\EasyAuth\Models\User;
 
-class Profile extends Model  {
+class Profile extends Eloquent  {
     
     protected $fillable = [
         'user_id',
@@ -16,7 +16,7 @@ class Profile extends Model  {
         'gender'
     ];
     
-    public function User() {
+    public function user() {
         return $this->belongsTo(User::class);
     }
 

@@ -10,4 +10,5 @@ interface UserInterface {
     public function roles();
     
     public function profile();
+
 }

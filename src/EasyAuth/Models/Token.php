@@ -2,11 +2,11 @@
 
 namespace AmitKhare\EasyAuth\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
 use AmitKhare\EasyAuth\Models\User;
 
-class Token extends Model  {
+class Token extends Eloquent  {
      
      protected $fillable = [
         'user_id',
