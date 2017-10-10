@@ -11,10 +11,15 @@ use AmitKhare\EasyAuthentication;
 // autoload via composer
 require __DIR__.'/../vendor/autoload.php';
 
-require __DIR__.'/Auth/Admin.php';
-require __DIR__.'/Auth/AdminsRole.php';
-require __DIR__.'/Auth/AdminsProfile.php';
-require __DIR__.'/Auth/AdminsToken.php';
+require __DIR__.'/AdminAuth/Admin.php';
+require __DIR__.'/AdminAuth/AdminsRole.php';
+require __DIR__.'/AdminAuth/AdminsProfile.php';
+require __DIR__.'/AdminAuth/AdminsToken.php';
+
+require __DIR__.'/CustomerAuth/Customer.php';
+require __DIR__.'/CustomerAuth/CustomersRole.php';
+require __DIR__.'/CustomerAuth/CustomersProfile.php';
+require __DIR__.'/CustomerAuth/CustomersToken.php';
 
 
 $capsule = new Capsule;
@@ -43,8 +48,9 @@ $rules = [
     "password"  => "required|min:4|max:35"
 ];
 
-//$auth = new EasyAuthentication( new AdminAuth\Admin(), $rules );
-$auth = new EasyAuthentication();
+$auth = new EasyAuthentication( new AdminAuth\Admin(), $rules );
+//$auth = new EasyAuthentication( new CustomerAuth\Customer(), $rules );
+//$auth = new EasyAuthentication();
 
 // identifier = 'amit' password = 'pass'
 $auth->login($_GET);
