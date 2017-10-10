@@ -8,7 +8,5 @@ interface UserInterface {
     public function tokens();
     
     public function roles();
-    
-    public function profile();
 
 }

@@ -49,7 +49,7 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
         }
         
         if(!$user = $this->_fetchUser($data)){
-            // no user found no need to send response
+            // no user found no need to set response, already set.
             return false;
         }
         

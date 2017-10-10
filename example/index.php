@@ -13,6 +13,12 @@ require __DIR__.'/../vendor/autoload.php';
 require __DIR__.'/CustomerModel.php';
 require __DIR__.'/AdminModel.php';
 
+require __DIR__.'/Auth/Admin.php';
+require __DIR__.'/Auth/AdminRole.php';
+require __DIR__.'/Auth/AdminProfile.php';
+require __DIR__.'/Auth/AdminToken.php';
+
+
 $capsule = new Capsule;
 
 $capsule->addConnection([
@@ -39,13 +45,13 @@ $rules = [
     "password"  => "required|min:4|max:35"
 ];
 
-//$auth = new EasyAuthentication( new Admin\User(), $rules );
-$auth = new EasyAuthentication();
+$auth = new EasyAuthentication( new AdminAuth\Admin(), $rules );
+//$auth = new EasyAuthentication();
 
 // identifier = 'amit' password = 'pass'
 $auth->login($_GET);
 
-s($auth->getCurrentUser());
+s($auth->getCurrentUser()->username);
 s($auth->getStorage()->token);
 
 s($auth->isLoggedin());
