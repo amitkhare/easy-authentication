@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 
 use AmitKhare\EasyAuth\UserInterface;
 
-use AmitKhare\EasyAuth\Models\Token;
-use AmitKhare\EasyAuth\Models\Role;
-use AmitKhare\EasyAuth\Models\Profile;
+use AmitKhare\EasyAuth\Models\UsersToken;
+use AmitKhare\EasyAuth\Models\UsersRole;
+use AmitKhare\EasyAuth\Models\UsersProfile;
 
 class User extends  Eloquent implements UserInterface {
 
@@ -25,16 +25,16 @@ class User extends  Eloquent implements UserInterface {
     
     public function tokens() {
       
-        return $this->hasMany(Token::class,'user_id');
+        return $this->hasMany(UsersToken::class,'user_id');
     }
     
     public function roles() {
         
-        return $this->belongsToMany(Role::class, 'role_user');
+        return $this->belongsToMany(UsersRole::class, 'user_role');
     }
     
     public function profile() {
-        return $this->hasOne(Profile::class,'user_id');
+        return $this->hasOne(UsersProfile::class,'user_id');
     }
 
     

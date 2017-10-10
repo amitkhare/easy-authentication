@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 
 use AmitKhare\EasyAuth\Models\User;
 
-class Token extends Eloquent  {
+class UsersToken extends Eloquent  {
      
      protected $fillable = [
         'user_id',

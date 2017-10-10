@@ -4,9 +4,7 @@ namespace AdminAuth;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
-class AdminToken extends Eloquent  {
-
-     protected $table = "admintokens";
+class AdminsToken extends Eloquent  {
 
      protected $fillable = [
         'admin_id',

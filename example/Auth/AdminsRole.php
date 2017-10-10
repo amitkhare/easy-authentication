@@ -4,7 +4,7 @@ namespace AdminAuth;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
-class AdminRole extends Eloquent  {
+class AdminsRole extends Eloquent  {
     
     protected $fillable = [
         'role'
@@ -15,7 +15,7 @@ class AdminRole extends Eloquent  {
     }
     
     public function admins() {
-        return $this->belongsToMany(Admin::class, 'role_admin');
+        return $this->belongsToMany(Admin::class, 'admin_role');
     }
     
 }

@@ -4,7 +4,7 @@ namespace AdminAuth;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
-class AdminProfile extends Eloquent  {
+class AdminsProfile extends Eloquent  {
     
     protected $fillable = [
         'admin_id',

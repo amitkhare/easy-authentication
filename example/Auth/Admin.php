@@ -21,16 +21,16 @@ class Admin extends  Eloquent implements UserInterface {
     
     public function tokens() {
       
-        return $this->hasMany(AdminToken::class,'admin_id');
+        return $this->hasMany(AdminsToken::class,'admin_id');
     }
     
     public function roles() {
         
-        return $this->belongsToMany(AdminRole::class, 'role_admin');
+        return $this->belongsToMany(AdminsRole::class, 'admin_role');
     }
     
     public function profile() {
-        return $this->hasOne(AdminProfile::class,'admin_id');
+        return $this->hasOne(AdminsProfile::class,'admin_id');
     }
 
     
