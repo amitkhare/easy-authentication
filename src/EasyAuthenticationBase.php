@@ -79,8 +79,9 @@ class EasyAuthenticationBase  {
     public $response;
     
     public function __construct(
-                        UserInterface $user = null,
-                        array $config = null ) {
+                        array $config = null,
+                        UserInterface $user = null
+                        ) {
 
         // set config
         $this->_setConfig($config);

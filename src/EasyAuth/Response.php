@@ -44,4 +44,11 @@ class Response {
         $this->messages[] = $message;
     }
     
+    public function t($keyString, $replacements=null, $isFormatReplacement=true, $locale=null){
+        
+        $this->translator->setFormatReplacement($isFormatReplacement);
+        
+        return $this->translator->translate($keyString,$replacements,$locale);
+    }
+    
 }

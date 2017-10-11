@@ -16,11 +16,6 @@ require __DIR__.'/AdminAuth/AdminsRole.php';
 require __DIR__.'/AdminAuth/AdminsProfile.php';
 require __DIR__.'/AdminAuth/AdminsToken.php';
 
-require __DIR__.'/CustomerAuth/Customer.php';
-require __DIR__.'/CustomerAuth/CustomersRole.php';
-require __DIR__.'/CustomerAuth/CustomersProfile.php';
-require __DIR__.'/CustomerAuth/CustomersToken.php';
-
 
 // load .env helper
 try {
@@ -69,13 +64,23 @@ $config = [
             'name' => getenv('MAIL_FROM_NAME')
         ],
     ],
+    "uri" => [
+        "base"=>getenv('APP_BASEURL'),
+        "verify_email" => "?verifyemail="  // use $app->router here
+    ],
 ];
 
-//$auth = new EasyAuthentication( new AdminAuth\Admin(), $rules );
-$auth = new EasyAuthentication( new CustomerAuth\Customer(), $config );
-//$auth = new EasyAuthentication();
+$auth = new EasyAuthentication( $config, new AdminAuth\Admin() );
+//$auth = new EasyAuthentication($config);
 
-$auth->register([]);
+if(isset($_GET['verify_email'])){
+    $auth->verifyEmail(trim($_GET['verify_email']));
+} else {
+    $auth->register($_GET);
+}
+
+s($auth->response->getErrors());
+s($auth->response->getMessages());
 die;
 // identifier = 'amit' password = 'pass'
 $auth->login($_GET);

@@ -69,12 +69,12 @@ class Mailer {
         return $this;
     }
 
-    public function send(){
-
+    public function send($isHtml=true){
+        $format = ($isHtml) ? 'text/html': "";
         $message = (new \Swift_Message($this->subject))
           ->setFrom([ $this->sender['email'] => $this->sender['name'] ])
           ->setTo([ $this->to["email"] => $this->to["name"] ])
-          ->setBody($this->body);
+          ->setBody($this->body,$format);
         
         return $this->mailer->send($message);
 

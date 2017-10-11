@@ -32,13 +32,96 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
 
     
     public function register(array $data){
+        
+        $v = $this->validation;
+        $v->setSource($data);
 
-        $mail = $this->mailer->to("amit@khare.co.in")
-            ->subject("email subject")
-            ->body("this is body");
-        d($mail->send());
+        $v->check("firstname", $this->vRules->r("firstname") );
+        $v->check("email", $this->vRules->r("email") );
+        $v->check("password", $this->vRules->r("password") );
+        $v->check("gender", $this->vRules->r("gender") );
+        
+        if(!$v->isValid()){
+            $this->response->setErrors($v->getStatus(),"danger");
+            return false;
+        }
+
+        if ($_usr = $this->user->where('email', '=', trim($data['email']) )->first()) {
+			
+        	if(!Helpers::verify(trim($data['password']),$_usr->password)){
+        	    $this->response->setMessage(500,"USER_EMAIL_EXIESTS","warning");
+	            return false;
+        	}
+            
+            $this->response->setMessage(500,"USER_ALREADY_REGISTERED_LOGIN","danger");
+            return false;
+
+        }
+        
+        $user = $this->user->firstOrCreate([
+            'email'=>trim($data['email']),
+            'password'=>Helpers::password(trim($data['password'])),
+            'email_verification_hash'=>Helpers::randomKey(30)
+        ]);
+        
+        if(!$user){
+            $this->response->setMessage(500,"USER_REGISTRATION_FAILED","danger");
+            return false;
+        }
+        
+        $user->profile()->create([
+            'firstname'=>trim($data['firstname']),
+            'gender'=>trim($data['gender'])
+        ]);
+        
+        $user->email_verification_link = $this->config['uri']['base'].$this->config['uri']['verify_email'].$user->email_verification_hash;
+        
+        $this->response->setMessage(201,"USER_REGISTRATION_SUCCESS","success");
+ 
+        $this->mailer->to($user->email,$user->profile->firstname)
+            ->subject($this->response->t("VERIFY_EMAIL_SUBJECT",$user->profile->firstname))
+            ->body($this->response->t("VERIFY_EMAIL_BODY",$user->email_verification_link,false))
+            ->send();
+            
+        return $user->id;
     }
+    
+    public function verifyEmail($hash){
+    	$hash = trim($hash);
+    	if(!$user = $this->user->where(['email_verification_hash'=>$hash])->first()){
+    		// invalid hash
+    		$this->response->setMessage(404,"USER_ACTIVATION_HASH_INVALID","info");
+    		return false;
+    	}
+    	
+    	if($user->is_active){
+    		// already activated
+    		
+    		$user->email_verification_hash = null;
+    		$user->password_recovery_hash = null;
+    		$user->save();
+    	
+    		$this->response->setMessage(404,"USER_ALREADY_ACTIVATED","info");
+    		return true;
+    	}
+    	
+    	$user->is_active = 1;
+    	$user->email_verification_hash = null;
+    	$user->password_recovery_hash = null;
 
+    	if(!$user->save()){
+	    	// unable to activate
+	    	$this->response->setMessage(500,"USER_ACTIVATION_FAILED","danger");
+	    	return false;
+    	}
+    	
+    	// user ACTIVATION success
+    	$this->response->setMessage(200,"USER_ACTIVATION_SUCCESS","success");
+
+    	return $user->id;
+    	
+    }
+    
     public function login(array $data){
 
         $v = $this->validation;
