@@ -66,7 +66,8 @@ $config = [
     ],
     "uri" => [
         "base"=>getenv('APP_BASEURL'),
-        "verify_email" => "?verify_email="  // use $app->router here
+        "verify_email" => "?verify_email=",  // use $app->router here
+        "forgot_password" => "?forgot_password=",  // use $app->router here
     ],
 ];
 

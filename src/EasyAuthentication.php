@@ -29,7 +29,138 @@ namespace AmitKhare;
 use AmitKhare\EasyAuth\Helpers;
 
 class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
+    
+    public function resetPassword($data){
 
+        // perform validation here
+        
+        $user = $this->user->where('email','=',$data['email'])->first();
+
+        if(!$user){
+            return false;
+        }
+        
+        $user->recover_hash = Helper::randomKey();
+        
+        if(!$user->save()){
+            return false;
+        }
+
+        $user->recover_link = $this->config['uri']['base'].$this->config['uri']['forgot_password'].$user->recover_hash;
+        
+        $this->mailer->to($user->email,$user->profile->firstname)
+            ->subject($this->response->t("RESET_PASSWORD_SUBJECT",$user->profile->firstname))
+            ->body($this->response->t("RESET_PASSWORD_BODY",[$user->profile->firstname,$user->recover_link ],false))
+            ->send();
+
+    	$this->response->setMessage(200,"USER_PASSWORD_RESET_LINK_SENT","success");
+        return true;
+        
+    }
+    
+    public function recover($hash, $data){
+
+        $user = $this->user->where('recover_hash','=',$hash)->first();
+
+        if(!$user){
+            return false;
+        }
+        
+        // apply validation here
+        
+        $user->recover_hash = null;
+        $user->password = $this->hasher->password($data['password']);
+        
+        if(!$user->save()){
+            return false;
+        }
+        
+        return true;
+        
+    }
+    
+    public function updatePassword($data){
+        
+        if(!$user = $this->getCurrentUser()){
+            return false;
+        }
+        
+        // apply validation here
+        
+        if(!Helpers::verify(trim($data['password']), $user->password )){
+            // send respose password invalid
+            return false;
+        }
+        
+        $data['new_password'] = trim($data['new_password']);
+        
+        $user->recover_hash = null;
+        $user->password = $this->hasher->password($data['new_password']);
+        
+        if(!$user->save()){
+            // can not change password
+            return false;
+        }
+        
+        $user->raw_password = $data['new_password'];
+        
+        $this->mailer->to($user->email,$user->profile->firstname)
+            ->subject($this->response->t("UPDATE_PASSWORD_SUBJECT",$user->profile->firstname))
+            ->body($this->response->t("UPDATE_PASSWORD_BODY",[$user->profile->firstname,$user->raw_password ],false))
+            ->send();
+        
+        return true;
+
+    }
+    
+    
+    // this dont work, set email update hash, set active to inactive
+    public function updateEmail($data){
+        
+        if(!$user = $this->getCurrentUser()){
+            return false;
+        }
+        
+        // apply validation here
+        
+        if(!Helpers::verify(trim($data['password']), $user->password )){
+            // send respose password invalid
+            return false;
+        }
+        
+        $data['new_email'] = trim($data['new_email']);
+        
+        
+        $user->new_email = $data['new_email'];
+        $user->is_active = 0;
+    	$user->email_verification_hash = Helpers::randomKey(30);
+      
+        if(!$user->save()){
+            // can not change password
+            return false;
+        }
+        
+        $user->update_email_link = $this->config['uri']['base'].$this->config['uri']['update_email'].$user->email_verification_hash;
+        
+        // email to new email address
+        $this->mailer->to($user->email,$user->profile->firstname)
+            ->subject($this->response->t("UPDATE_EMAIL_SUBJECT",$user->profile->firstname))
+            ->body($this->response->t("UPDATE_EMAIL_BODY",[$user->profile->firstname, $user->update_email_link ],false))
+            ->send();
+        
+        return true;
+
+    }
+    
+    public function is_recover($hash) {
+        $user = $this->user->where('recover_hash','=',$hash)->first();
+        return ($user->recover_hash==null) ? false : true;
+    }
+    
+    public function is_active($hash){
+        $user = $this->user->where('activation_hash','=',$hash)->first();
+        return ($user->activation_hash==null) ? false : true;
+    }
     
     public function register(array $data){
         
