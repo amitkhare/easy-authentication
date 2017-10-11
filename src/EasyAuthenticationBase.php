@@ -24,6 +24,33 @@ namespace AmitKhare;
  * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  * @link https://github.com/amitkhare/easy-authentication
  * @author Amit Kumar Khare <me.amitkhare@gmail.com>
+ * 
+ * SAMPLE CONFIG -------------
+ * 
+ * $config = [
+        "validation_rules" => [
+            "identifier"  => "required|min:2|max:25",
+            "password"  => "required|min:4|max:35"
+        ],
+        "mailer" => [
+            "smtp" => [
+                "server" => "smtp.gmail.com",
+                "port" => 25,
+                "username" => "amit@khare.co.in",
+                "password" => "pword"
+            ],
+        
+            "sender" => [
+                "email" => "john@doe.com",
+                "name" => "John Doe",
+            ],
+        ],
+        "storage_name" => "AUTH",
+        "locale"=> "en-IN",
+        "locale_path" => __DIR__."/locales/",
+    ];
+ * 
+ * 
  */
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
@@ -33,12 +60,16 @@ use AmitKhare\EasyValidation;
 use AmitKhare\EasyAuth\Helpers;
 use AmitKhare\EasyAuth\Response;
 use AmitKhare\EasyAuth\Storage;
+use AmitKhare\EasyAuth\Mailer;
 use AmitKhare\EasyAuth\ValidationRules;
 use AmitKhare\EasyAuth\UserInterface;
 
+
 class EasyAuthenticationBase  {
     
+    protected $config;
     protected $storage;
+    protected $mailer;
     protected $validation;
     protected $translator;
     protected $user;
@@ -47,34 +78,38 @@ class EasyAuthenticationBase  {
     protected $vRules;
     public $response;
     
-    
     public function __construct(
                         UserInterface $user = null,
-                        array $validationRules=null,
-                        $locale="en-IN",
-                        $localePath=__DIR__."/locales/",
-                        $storageName="AUTH" ) {
-            
+                        array $config = null ) {
+
+        // set config
+        $this->_setConfig($config);
+        
         if($user == null){
            $user = new \AmitKhare\EasyAuth\Models\User();
         }
-    
+
         $this->user = $user;
         $this->token = $this->user->tokens()->make()->newInstance();
         $this->role = $this->user->roles()->make()->newInstance();
         
         $this->validation = new EasyValidation();
-        $this->validation->setLocale($locale,$localePath); 
+        $this->validation->setLocale($this->config['locale'],$this->config['locale_path']); 
 
-        $this->response = new Response($locale,$localePath);
+        $this->response = new Response($this->config['locale'],$this->config['locale_path']);
         
-        $this->vRules = new ValidationRules($validationRules);
+        $this->vRules = new ValidationRules($config['validation_rules']);
         
-        $this->storage = new Storage($storageName);
-        
-       
-        
+        // set auth storage name
+        $refl = new \ReflectionClass($user);
+        $userClassName = $refl->getShortName();
+        $this->storage = new Storage(strtoupper($this->config['storage_name']."_".$userClassName));
+   
+   
+        $this->mailer = new Mailer($config["mailer"]);
+
     }
+    
     
     public function isLoggedin() {
         if(!$data = $this->getStorage()){
@@ -248,5 +283,14 @@ class EasyAuthenticationBase  {
         return $user;
     }
     
-   
+    private function _setConfig(array $config = []){
+        
+        $config["storage_name"] = (isset($config["storage_name"])) ? $config["storage_name"] : "AUTH"; 
+        $config["locale"] = (isset($config["locale"])) ? $config["locale"] : "en-IN"; 
+        $config["locale_path"] = (isset($config["locale_path"])) ? $config["locale_path"] : __DIR__."/locales/"; 
+        $config["validation_rules"] = (isset($config["validation_rules"])) ? $config["validation_rules"] : []; 
+        $config["mailer"] = (isset($config["mailer"])) ? $config["mailer"] : null; 
+        
+        return $this->config = $config;
+    }
 }

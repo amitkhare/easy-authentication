@@ -23,8 +23,14 @@
         "amitkhare/easy-translator": "^0.1.2",
         "illuminate/database": "^5.5",
         "kint-php/kint": "^2.2",
+        "vlucas/phpdotenv": "^2.4",
         "amitkhare/easy-session": "^0.0",
         "psr/http-message": "^1.0",
         "swiftmailer/swiftmailer": "^6.0"
-    }
+    },
+    "scripts": {
+		"post-root-package-install": [
+			"php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+		]
+	}
 }

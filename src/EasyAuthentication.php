@@ -32,7 +32,11 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
 
     
     public function register(array $data){
-        
+
+        $mail = $this->mailer->to("amit@khare.co.in")
+            ->subject("email subject")
+            ->body("this is body");
+        d($mail->send());
     }
 
     public function login(array $data){
