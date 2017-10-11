@@ -26,7 +26,7 @@ class Admin extends  Eloquent implements UserInterface {
     
     public function roles() {
         
-        return $this->belongsToMany(AdminsRole::class, 'admin_role');
+        return $this->belongsToMany(AdminsRole::class, 'admin_role','admin_id', 'role_id');
     }
     
     public function profile() {

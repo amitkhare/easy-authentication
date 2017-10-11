@@ -1,5 +1,7 @@
 {
     "USER_LOGGED_OUT_EVERYWHERE": "You're logged-out everywhere.",
     "VERIFY_EMAIL_SUBJECT": "Hello! %s, Please Verify your account.",
-    "VERIFY_EMAIL_BODY": "Welcome! <a href=\"%s\">click here</a> to verify your account."
+    "VERIFY_EMAIL_BODY": "Welcome! %s, <a href=\"%s\">click here</a> to verify your account.",
+    "VERIFY_EMAIL_SUBJECT_SUCCESS": "Congratulations! %s, your account has been verified.",
+    "VERIFY_EMAIL_BODY_SUCCESS": "Congratulations! %s, your account has been verified."
 }

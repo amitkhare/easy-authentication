@@ -74,13 +74,17 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
             'gender'=>trim($data['gender'])
         ]);
         
+        
+        // assign roles, first role from roles table
+        $user->roles()->attach(1);
+        
         $user->email_verification_link = $this->config['uri']['base'].$this->config['uri']['verify_email'].$user->email_verification_hash;
         
         $this->response->setMessage(201,"USER_REGISTRATION_SUCCESS","success");
  
         $this->mailer->to($user->email,$user->profile->firstname)
             ->subject($this->response->t("VERIFY_EMAIL_SUBJECT",$user->profile->firstname))
-            ->body($this->response->t("VERIFY_EMAIL_BODY",$user->email_verification_link,false))
+            ->body($this->response->t("VERIFY_EMAIL_BODY",[$user->profile->firstname,$user->email_verification_link],false))
             ->send();
             
         return $user->id;
@@ -117,7 +121,12 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
     	
     	// user ACTIVATION success
     	$this->response->setMessage(200,"USER_ACTIVATION_SUCCESS","success");
-
+        
+        $this->mailer->to($user->email,$user->profile->firstname)
+            ->subject($this->response->t("VERIFY_EMAIL_SUBJECT_SUCCESS",$user->profile->firstname))
+            ->body($this->response->t("VERIFY_EMAIL_BODY_SUCCESS",$user->profile->firstname))
+            ->send();
+            
     	return $user->id;
     	
     }

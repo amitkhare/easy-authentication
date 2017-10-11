@@ -15,7 +15,7 @@ class AdminsRole extends Eloquent  {
     }
     
     public function admins() {
-        return $this->belongsToMany(Admin::class, 'admin_role');
+        return $this->belongsToMany(Admin::class, 'admin_role','admin_id', 'role_id');
     }
     
 }

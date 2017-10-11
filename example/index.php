@@ -66,12 +66,12 @@ $config = [
     ],
     "uri" => [
         "base"=>getenv('APP_BASEURL'),
-        "verify_email" => "?verifyemail="  // use $app->router here
+        "verify_email" => "?verify_email="  // use $app->router here
     ],
 ];
 
-$auth = new EasyAuthentication( $config, new AdminAuth\Admin() );
-//$auth = new EasyAuthentication($config);
+//$auth = new EasyAuthentication( $config, new AdminAuth\Admin() );
+$auth = new EasyAuthentication($config);
 
 if(isset($_GET['verify_email'])){
     $auth->verifyEmail(trim($_GET['verify_email']));

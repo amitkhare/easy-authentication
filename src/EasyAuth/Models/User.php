@@ -30,7 +30,7 @@ class User extends  Eloquent implements UserInterface {
     
     public function roles() {
         
-        return $this->belongsToMany(UsersRole::class, 'user_role');
+        return $this->belongsToMany(UsersRole::class, 'user_role','user_id','role_id');
     }
     
     public function profile() {
