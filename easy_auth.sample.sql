@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 10, 2017 at 01:17 PM
+-- Generation Time: Oct 11, 2017 at 12:41 PM
 -- Server version: 5.7.13-0ubuntu0.16.04.2
 -- PHP Version: 7.0.22-2+ubuntu16.04.1+deb.sury.org+4
 
@@ -40,13 +40,6 @@ CREATE TABLE `admins` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `admins`
---
-
-INSERT INTO `admins` (`id`, `username`, `email`, `password`, `mobile`, `allowed_tokens`, `email_verification_hash`, `password_recovery_hash`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'mickey', 'mickey@khare.co.in', '$2y$10$ciHYmVAoVf0faLm97pXET.AaiZycm4fcnhE4Us7wd/B0o7ZHbCyqK', NULL, 3, '', NULL, 1, '2017-09-26 19:00:42', '2017-09-26 19:00:42');
-
 -- --------------------------------------------------------
 
 --
@@ -64,13 +57,6 @@ CREATE TABLE `admins_profiles` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `admins_profiles`
---
-
-INSERT INTO `admins_profiles` (`id`, `admin_id`, `firstname`, `middlename`, `lastname`, `gender`, `avatar`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Mickey', 'Khare', 'Admin', 'male', 'https://avatars.io/static/default_128.jpg', '2017-09-26 19:00:42', '2017-09-26 19:00:42');
 
 -- --------------------------------------------------------
 
@@ -90,11 +76,9 @@ CREATE TABLE `admins_roles` (
 --
 
 INSERT INTO `admins_roles` (`id`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'user', '2016-12-30 07:53:17', NULL),
-(2, 'editor', '2016-12-30 07:53:17', NULL),
-(3, 'moderator', '2016-12-30 07:53:41', NULL),
-(4, 'admin', '2016-12-30 07:53:41', NULL),
-(5, 'superadmin', '2016-12-30 07:54:16', NULL);
+(1, 'moderator', '2016-12-30 07:53:17', NULL),
+(2, 'admin', '2016-12-30 07:53:17', NULL),
+(3, 'superadmin', '2016-12-30 07:53:41', NULL);
 
 -- --------------------------------------------------------
 
@@ -127,18 +111,6 @@ CREATE TABLE `admin_role` (
   `role_id` int(11) DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `admin_role`
---
-
-INSERT INTO `admin_role` (`id`, `admin_id`, `role_id`) VALUES
-(1, 1, 1),
-(2, 2, 1),
-(3, 1, 2),
-(4, 1, 3),
-(5, 2, 2),
-(6, 2, 3);
-
 -- --------------------------------------------------------
 
 --
@@ -159,14 +131,6 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `mobile`, `allowed_tokens`, `email_verification_hash`, `password_recovery_hash`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'amit', 'amit@khare.co.in', '$2y$10$ciHYmVAoVf0faLm97pXET.AaiZycm4fcnhE4Us7wd/B0o7ZHbCyqK', NULL, 3, '', NULL, 1, '2017-09-26 19:00:42', '2017-09-26 19:00:42'),
-(2, 'admin', 'admin@github.net', '$2y$10$ciHYmVAoVf0faLm97pXET.AaiZycm4fcnhE4Us7wd/B0o7ZHbCyqK', NULL, 3, NULL, NULL, 1, '2017-09-26 19:01:08', '2017-09-26 19:02:53');
-
 -- --------------------------------------------------------
 
 --
@@ -184,15 +148,6 @@ CREATE TABLE `users_profiles` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `users_profiles`
---
-
-INSERT INTO `users_profiles` (`id`, `user_id`, `firstname`, `middlename`, `lastname`, `gender`, `avatar`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Amit', 'Kumar', 'Khare', 'male', 'https://avatars.io/static/default_128.jpg', '2017-09-26 19:00:42', '2017-09-26 19:00:42'),
-(2, 2, 'Admin', 'Site', NULL, 'male', 'https://avatars.io/static/default_128.jpg', '2017-09-26 19:01:08', '2017-09-26 19:01:08'),
-(4, 0, 'Mickey', '', 'Khare', 'male', 'https://avatars.io/static/default_128.jpg', '2017-09-26 19:01:08', '2017-09-26 19:01:08');
 
 -- --------------------------------------------------------
 
@@ -214,9 +169,7 @@ CREATE TABLE `users_roles` (
 INSERT INTO `users_roles` (`id`, `role`, `created_at`, `updated_at`) VALUES
 (1, 'user', '2016-12-30 07:53:17', NULL),
 (2, 'editor', '2016-12-30 07:53:17', NULL),
-(3, 'moderator', '2016-12-30 07:53:41', NULL),
-(4, 'admin', '2016-12-30 07:53:41', NULL),
-(5, 'superadmin', '2016-12-30 07:54:16', NULL);
+(3, 'moderator', '2016-12-30 07:53:41', NULL);
 
 -- --------------------------------------------------------
 
@@ -248,18 +201,6 @@ CREATE TABLE `user_role` (
   `user_id` int(11) DEFAULT NULL,
   `role_id` int(11) DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `user_role`
---
-
-INSERT INTO `user_role` (`id`, `user_id`, `role_id`) VALUES
-(1, 1, 1),
-(2, 2, 1),
-(3, 1, 2),
-(4, 1, 3),
-(5, 2, 2),
-(6, 2, 3);
 
 --
 -- Indexes for dumped tables
@@ -341,12 +282,12 @@ ALTER TABLE `user_role`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `admins_profiles`
 --
 ALTER TABLE `admins_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `admins_roles`
 --
@@ -356,22 +297,22 @@ ALTER TABLE `admins_roles`
 -- AUTO_INCREMENT for table `admins_tokens`
 --
 ALTER TABLE `admins_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `admin_role`
 --
 ALTER TABLE `admin_role`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users_profiles`
 --
 ALTER TABLE `users_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users_roles`
 --
@@ -381,12 +322,12 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT for table `users_tokens`
 --
 ALTER TABLE `users_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `user_role`
 --
 ALTER TABLE `user_role`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
