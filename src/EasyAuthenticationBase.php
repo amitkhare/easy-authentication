@@ -206,6 +206,16 @@ class EasyAuthenticationBase  {
     	return $this->storage->clearData();
     }
     
+    public function is_recover($hash) {
+        $user = $this->user->where('password_recovery_hash','=',$hash)->first();
+        return ($user->password_recovery_hash==null) ? false : true;
+    }
+    
+    public function is_active($hash){
+        $user = $this->user->where('activation_hash','=',$hash)->first();
+        return ($user->activation_hash==null) ? false : true;
+    }
+    
     protected function removeTokens($token){
 
         if(!$user = $this->getUser($token)){

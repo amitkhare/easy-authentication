@@ -2,13 +2,14 @@
     "USER_LOGGED_OUT_EVERYWHERE": "You're logged-out everywhere.",
     "VERIFY_EMAIL_SUBJECT": "Hello! %s, Please Verify your account.",
     "VERIFY_EMAIL_BODY": "Welcome! %s, <a href=\"%s\">click here</a> to verify your account.",
-    "VERIFY_EMAIL_SUBJECT_SUCCESS": "Congratulations! %s, your account has been verified.",
-    "VERIFY_EMAIL_BODY_SUCCESS": "Congratulations! %s, your account has been verified.",
-    "RESET_PASSWORD_SUBJECT": "Hello! %s, reset your account.",
-    "RESET_PASSWORD_BODY": "Hi! %s, <a href=\"%s\">click here</a> to reset your password.",
+    "VERIFY_EMAIL_SUBJECT_SUCCESS": "Congratulations! %s, your email has been verified.",
+    "VERIFY_EMAIL_BODY_SUCCESS": "Congratulations! %s, your email has been verified.",
+    "FORGOT_PASSWORD_SUBJECT": "Hello! %s, reset your account.",
+    "FORGOT_PASSWORD_BODY": "Hi! %s, <a href=\"%s\">click here</a> to reset your password.",
+    "RESET_PASSWORD_SUBJECT": "Hello! %s, your account password changed.",
+    "RESET_PASSWORD_BODY": "Hi! %s, your new password is <b>%s</b> if it wasn't you <a href=\"%s\">click here</a>.",
     "UPDATE_PASSWORD_SUBJECT": "Hello! %s, your new account password.",
     "UPDATE_PASSWORD_BODY": "Hi! %s, your new account password is <strong>%s</strong>.",
     "UPDATE_EMAIL_SUBJECT": "Hello! %s, verify your new account email.",
     "UPDATE_EMAIL_BODY": "Hi! %s, <a href=\"%s\">click here</a> to update your email."
-
 }

@@ -74,17 +74,13 @@ $config = [
 //$auth = new EasyAuthentication( $config, new AdminAuth\Admin() );
 $auth = new EasyAuthentication($config);
 
-if(isset($_GET['verify_email'])){
-    $auth->verifyEmail(trim($_GET['verify_email']));
-} else {
-    $auth->register($_GET);
-}
+//$auth->login($_GET);
+//$auth->verifyEmail($_GET['verify_email']);
+//$auth->updateEmail($_GET);
 
-s($auth->response->getErrors());
-s($auth->response->getMessages());
-die;
+//die;
 // identifier = 'amit' password = 'pass'
-$auth->login($_GET);
+//$auth->login($_GET);
 
 s($auth->getCurrentUser());
 s($auth->getStorage()->token);
