@@ -190,10 +190,16 @@ class EasyAuthenticationBase  {
         return $token;
     }
     
-    public function logout($everywhere=false){
+    public function logout($tokenStr=null,$everywhere=false){
+        
         // clear session
-        $tokenStr = $this->getStorage()->token;
-
+        
+        if(!$tokenStr){
+            if(!$tokenStr = $this->getStorage()->token){
+                return false;
+            }
+        }
+        
         if($everywhere){
             $this->removeTokens($tokenStr);
             $this->response->setMessage(200,"USER_LOGGED_OUT_EVERYWHERE","success");
@@ -204,6 +210,17 @@ class EasyAuthenticationBase  {
         
         
     	return $this->storage->clearData();
+    }
+    
+    protected function removeToken($token){
+
+        if(!$token = $this->getToken($token)){
+            $this->response->setMessage(401,"TOKEN_INVALID","warning");
+            return false;
+        }
+        
+        $this->response->setMessage(200,"TOKEN_REMOVED","success");
+        return $token->delete();
     }
     
     public function is_recover($hash) {
@@ -219,12 +236,14 @@ class EasyAuthenticationBase  {
     protected function removeTokens($token){
 
         if(!$user = $this->getUser($token)){
+            $this->response->setMessage(401,"TOKEN_INVALID","warning");
             return false;
         }
     
         foreach ($user->tokens as $t) {
             $t->delete();
         }
+        $this->response->setMessage(200,"TOKENS_REMOVED","success");
         return true;
     }
     

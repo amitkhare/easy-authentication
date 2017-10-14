@@ -24,6 +24,7 @@ namespace AmitKhare;
  * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  * @link https://github.com/amitkhare/easy-authentication
  * @author Amit Kumar Khare <me.amitkhare@gmail.com>
+ * 
  */
 
 use AmitKhare\EasyAuth\Helpers;
@@ -108,12 +109,15 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
         
     }
     
-    public function updatePassword($data){
+    public function updatePassword($data,$user=null){
         
-        if(!$user = $this->getCurrentUser()){
-            return false;
+        if(!$user){
+            if(!$user = $this->getCurrentUser()){
+                $this->response->setMessage(401,"USER_NOT_LOGGED_IN","danger");
+                return false;
+            }            
         }
-        
+
         $v = $this->validation;
         $v->setSource($data);
 
@@ -154,11 +158,13 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
     
     
     // this dont work, set email update hash, set active to inactive
-    public function updateEmail($data){
+    public function updateEmail($data,$user=null){
         
-        if(!$user = $this->getCurrentUser()){
-            $this->response->setMessage(401,"USER_NOT_LOGGED_IN","danger");
-            return false;
+        if(!$user){
+            if(!$user = $this->getCurrentUser()){
+                $this->response->setMessage(401,"USER_NOT_LOGGED_IN","danger");
+                return false;
+            }            
         }
         
         $v = $this->validation;
@@ -208,6 +214,36 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
             ->send();
         
         $this->response->setMessage(200,"USER_EMAIL_UPDATED","success");
+        return true;
+
+    }
+    
+    
+    public function resendVerificationEmail($user=null){
+        
+        if(!$user){
+            if(!$user = $this->getCurrentUser()){
+                $this->response->setMessage(401,"USER_NOT_LOGGED_IN","danger");
+                return false;
+            }            
+        }
+        
+        if($user->is_active){
+            $this->response->setMessage(403,"USER_EMAIL_ALREADY_VERIFIED","warning");
+            return false;
+        }
+        
+        
+    	// user ACTIVATION CODE
+        $user->email_verification_link = $this->config['uri']['base'].$this->config['uri']['verify_email'].$user->email_verification_hash;
+        
+        $this->response->setMessage(200,"EMAIL_VERIFICATION_LINK_SENT","success");
+ 
+        $this->mailer->to($user->email,$user->profile->firstname)
+            ->subject($this->response->t("VERIFY_EMAIL_SUBJECT",$user->profile->firstname))
+            ->body($this->response->t("VERIFY_EMAIL_BODY",[$user->profile->firstname,$user->email_verification_link],false))
+            ->send();
+            
         return true;
 
     }
