@@ -80,7 +80,7 @@ $auth = new EasyAuthentication($config);
 
 //die;
 // identifier = 'amit' password = 'pass'
-//$auth->login($_GET);
+$auth->login($_GET);
 
 s($auth->getCurrentUser());
 s($auth->getStorage()->token);

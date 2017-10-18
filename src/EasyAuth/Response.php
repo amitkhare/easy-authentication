@@ -13,6 +13,7 @@ class Response {
     
      public function __construct($locale="hi-IN",$localePath=__DIR__."/locales/"){
         $this->translator = new EasyTranslator();
+        $this->translator->setIntermediateLocalePath(__DIR__."/locales/");
         $this->translator->setLocalePath($localePath);
         $this->translator->setLocale($locale); 
     }

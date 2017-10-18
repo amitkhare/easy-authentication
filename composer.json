@@ -23,6 +23,10 @@
         "illuminate/database": "^5.5",
         "amitkhare/easy-session": "^0.0",
         "swiftmailer/swiftmailer": "^6.0",
-        "amitkhare/easy-translator": "^0"
+        "amitkhare/easy-translator": "^0.1.4"
+    },
+    "require-dev": {
+        "kint-php/kint": "^2.2",
+        "vlucas/phpdotenv": "^2.4"
     }
 }
