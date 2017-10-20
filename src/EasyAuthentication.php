@@ -137,13 +137,15 @@ class EasyAuthentication extends \AmitKhare\EasyAuthenticationBase {
         $data['new_password'] = trim($data['new_password']);
         
         $user->password_recovery_hash = null;
-        $user->password = $this->hasher->password($data['new_password']);
+        $user->password = Helpers::password($data['new_password']);
         
         if(!$user->save()){
             // can not change password
             $this->response->setMessage(500,"USER_UNABLE_TO_UPDATE","danger");
             return false;
         }
+        
+        $this->response->setMessage(200,"USER_PASSWORD_UPDATED","success");
         
         $user->raw_password = $data['new_password'];
         
