@@ -7,6 +7,7 @@ $config = [
     "smtp" => [
         "server" => "smtp.gmail.com",
         "port" => 25,
+        "mode" => 'ssl',
         "username" => "amit@khare.co.in",
         "password" => "pword"
     ],
@@ -36,7 +37,7 @@ class Mailer {
         // sendmail transport
         //$transport = new Swift_SendmailTransport('/usr/sbin/sendmail -bs');
         
-        $transport = (new \Swift_SmtpTransport($config['smtp']['server'], $config['smtp']['port']))
+        $transport = (new \Swift_SmtpTransport($config['smtp']['server'], $config['smtp']['port'],$config['smtp']['mode'] ))
           ->setUsername($config['smtp']['username'])
           ->setPassword($config['smtp']['password'])
         ;
