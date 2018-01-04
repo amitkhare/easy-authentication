@@ -36,6 +36,7 @@ namespace AmitKhare;
             "smtp" => [
                 "server" => "smtp.gmail.com",
                 "port" => 25,
+		"mode" => 'ssl',
                 "username" => "amit@khare.co.in",
                 "password" => "pword"
             ],
